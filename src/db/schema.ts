@@ -7,7 +7,7 @@ import {
   timestamp,
   unique,
   uuid,
-  vector
+  vector,
 } from "drizzle-orm/pg-core";
 import { EMBEDDING_DIMENSIONS } from "../lib/constants";
 
@@ -15,7 +15,9 @@ export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
-  createdAt: timestamp("created_at", {withTimezone: true}).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 export const sessions = pgTable(
