@@ -1,0 +1,16 @@
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: marginalia-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: marginalia
+      POSTGRES_PASSWORD: marginalia
+      POSTGRES_DB: marginalia
+    ports:
+      - "5433:5432"
+    volumes:
+      - marginalia-pgdata:/var/lib/postgresql/data
+
+volumes:
+  marginalia-pgdata:
