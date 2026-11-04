@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { AuthForm } from "@/src/components/auth/auth-form";
+import { RedirectIfSignedIn } from "@/src/components/auth/redirect-if-signed-in";
 import { login } from "@/src/lib/auth/actions";
-import { getCurrentUser } from "@/src/lib/auth/current-user";
 
 export const metadata: Metadata = { title: "Sign in" };
 
-export default async function LoginPage() {
-  if (await getCurrentUser()) redirect("/library");
-
+export default function LoginPage() {
   return (
     <>
+      <Suspense fallback={null}>
+        <RedirectIfSignedIn />
+      </Suspense>
+
       <h1 className="font-serif text-3xl font-medium tracking-tight">
         Sign in to Marginalia
       </h1>

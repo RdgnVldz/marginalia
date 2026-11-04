@@ -1,8 +1,33 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { AccountControls } from "@/src/app/account-controls";
 import { requireUser } from "@/src/lib/auth/current-user";
 
-export default async function AppLayout({
+export default function AppLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  // This function reads no request data, so Next.js can prerender it.
+  // Everything that depends on the signed-in user streams in behind Suspense.
+  return (
+    <Suspense fallback={<AppShellFallback />}>
+      <AuthenticatedShell>{children}</AuthenticatedShell>
+    </Suspense>
+  );
+}
+
+// Placeholder with the same sidebar width, so the page doesn't jump
+function AppShellFallback() {
+  return (
+    <div className="flex min-h-screen">
+      <aside className="hidden w-64 shrink-0 border-r border-border md:block" />
+      <div className="flex-1" />
+    </div>
+  );
+}
+
+async function AuthenticatedShell({
   children,
 }: {
   children: React.ReactNode;
