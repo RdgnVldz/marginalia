@@ -1,0 +1,149 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "657d95d3-caec-4eec-af35-b2f4a2380ba7",
+  "prevIds": [
+    "d50a9ed4-92ba-4ada-a320-b6795f4c654e"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "vector_playground"
+      ],
+      "writes": [
+        "s|tbl|public.vector_playground",
+        "n|tbl|public.vector_playground",
+        "e|tbl|public.vector_playground",
+        "n|rel|public.vector_playground",
+        "n|type|public.vector_playground",
+        "n|rel|public.vector_playground_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "vector_playground",
+        "vector_playground_embedding_idx"
+      ],
+      "writes": [
+        "s|idx|public.vector_playground_embedding_idx",
+        "n|idx|public.vector_playground_embedding_idx",
+        "e|idx|public.vector_playground_embedding_idx",
+        "n|rel|public.vector_playground_embedding_idx"
+      ],
+      "reads": [
+        "n|tbl|public.vector_playground",
+        "n|sch|public",
+        "n|col|public.vector_playground.embedding"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "vector_playground",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "vector_playground",
+        "name": "id",
+        "type": "serial",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "vector_playground",
+        "name": "label",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "vector_playground",
+        "name": "embedding",
+        "type": "vector(3)",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "vector_playground",
+        "name": "vector_playground_embedding_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "embedding",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": {
+              "name": "vector_cosine_ops",
+              "default": false
+            }
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "hnsw",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "vector_playground",
+        "name": "vector_playground_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    }
+  ]
+}
