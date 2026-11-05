@@ -1,10 +1,11 @@
-import { count, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { db } from "@/src/db";
 import { documentPages, documents } from "@/src/db/schema";
 import { getCurrentUser } from "@/src/lib/auth/current-user";
 import { MAX_DOCUMENTS_PER_USER, MAX_FILE_BYTES } from "@/src/lib/constants";
 import { ParseError, parseDocument } from "@/src/lib/documents/parse";
+import { indexDocument } from "@/src/lib/documents/indexing";
 
 function fail(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
@@ -94,5 +95,17 @@ export async function POST(request: Request) {
     return document.id;
   });
 
-  return NextResponse.json({ id: documentId }, { status: 201 });
+    // For now we index inside the upload request. Milestone 7 moves this to a
+  // background job so uploads return instantly.
+  await indexDocument(documentId, user.id);
+
+  const [saved] = await db
+    .select({ status: documents.status, errorMessage: documents.errorMessage })
+    .from(documents)
+    .where(and(eq(documents.id, documentId), eq(documents.ownerId, user.id)));
+
+  return NextResponse.json(
+    { id: documentId, status: saved?.status, error: saved?.errorMessage },
+    { status: 201 },
+  );
 }

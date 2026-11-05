@@ -6,6 +6,7 @@ import { z } from "zod";
 import { db } from "@/src/db";
 import { documents } from "@/src/db/schema";
 import { requireUser } from "@/src/lib/auth/current-user";
+import { indexDocument } from "@/src/lib/documents/indexing";
 
 const idSchema = z.string().uuid();
 
@@ -23,5 +24,16 @@ export async function deleteDocument(documentId: string) {
       and(eq(documents.id, parsedId.data), eq(documents.ownerId, user.id)),
     );
 
+  revalidatePath("/library");
+}
+
+// Used for "Index now" (documents uploaded before indexing existed) and "Try again"
+export async function indexDocumentAction(documentId: string) {
+  const user = await requireUser();
+
+  const parsedId = idSchema.safeParse(documentId);
+  if (!parsedId.success) return;
+
+  await indexDocument(parsedId.data, user.id);
   revalidatePath("/library");
 }

@@ -1,7 +1,7 @@
 import "server-only";
-import { desc, eq } from "drizzle-orm";
+import { count, desc, eq } from "drizzle-orm";
 import { db } from "@/src/db";
-import { documents } from "@/src/db/schema";
+import { chunks, documents } from "@/src/db/schema";
 
 // Always takes the owner's id. Never write a query that returns other users' rows.
 export async function listDocuments(ownerId: string) {
@@ -13,10 +13,14 @@ export async function listDocuments(ownerId: string) {
       byteSize: documents.byteSize,
       pageCount: documents.pageCount,
       status: documents.status,
+      errorMessage: documents.errorMessage,
       createdAt: documents.createdAt,
+      chunkCount: count(chunks.id),
     })
     .from(documents)
+    .leftJoin(chunks, eq(chunks.documentId, documents.id))
     .where(eq(documents.ownerId, ownerId))
+    .groupBy(documents.id)
     .orderBy(desc(documents.createdAt));
 }
 
