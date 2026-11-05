@@ -1,7 +1,6 @@
-import "server-only";
 import { google } from "@ai-sdk/google";
 import { embed, embedMany } from "ai";
-import { EMBEDDING_DIMENSIONS } from "@/src/lib/constants";
+import { EMBEDDING_DIMENSIONS } from "../constants";
 
 // Stored on every chunk so we always know which model made a vector
 export const EMBEDDING_MODEL_ID = "gemini-embedding-001";

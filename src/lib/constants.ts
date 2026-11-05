@@ -26,3 +26,6 @@ export const MAX_QUERY_CHARS = 300;
 // Chat
 export const MAX_CHAT_MESSAGES = 12; // how much history the model sees
 export const MAX_QUESTION_CHARS = 1000;
+
+// Indexing runs in batches of this many passages, one workflow step per batch
+export const INDEX_BATCH_SIZE = 50;
