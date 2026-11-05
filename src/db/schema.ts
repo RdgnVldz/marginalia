@@ -55,6 +55,8 @@ export const documents = pgTable(
     filename: text("filename").notNull(),
     mimeType: text("mime_type").notNull(),
     byteSize: integer("byte_size").notNull(),
+    pageCount: integer("page_count").notNull().default(0),
+    charCount: integer("char_count").notNull().default(0),
     status: documentStatus("status").notNull().default("pending"),
     errorMessage: text("error_message"),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -98,5 +100,31 @@ export const chunks = pgTable(
       "hnsw",
       table.embedding.op("vector_cosine_ops"),
     ),
+  ],
+);
+
+export const documentPages = pgTable(
+  "document_pages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    documentId: uuid("document_id")
+      .notNull()
+      .references(() => documents.id, { onDelete: "cascade" }),
+    // Repeated on purpose, same reason as in chunks: filter by owner directly
+    ownerId: uuid("owner_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    pageNumber: integer("page_number").notNull(),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("document_pages_document_page_unique").on(
+      table.documentId,
+      table.pageNumber,
+    ),
+    index("document_pages_owner_id_idx").on(table.ownerId),
   ],
 );
