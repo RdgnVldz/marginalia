@@ -1,6 +1,6 @@
 import "server-only";
 import { google } from "@ai-sdk/google";
-import { embedMany } from "ai";
+import { embed, embedMany } from "ai";
 import { EMBEDDING_DIMENSIONS } from "@/src/lib/constants";
 
 // Stored on every chunk so we always know which model made a vector
@@ -40,4 +40,21 @@ export async function embedDocuments(texts: string[]): Promise<number[][]> {
   }
 
   return vectors;
+}
+
+// Embeds a user's question for searching. Note the different task type:
+// RETRIEVAL_QUERY pairs with the RETRIEVAL_DOCUMENT vectors stored earlier.
+export async function embedQuery(text: string): Promise<number[]> {
+  const { embedding } = await embed({
+    model: google.embedding(EMBEDDING_MODEL_ID),
+    value: text,
+    maxRetries: 3,
+    providerOptions: {
+      google: {
+        outputDimensionality: EMBEDDING_DIMENSIONS,
+        taskType: "RETRIEVAL_QUERY",
+      },
+    },
+  });
+  return embedding;
 }

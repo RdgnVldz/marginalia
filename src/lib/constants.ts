@@ -14,3 +14,9 @@ export const CHUNK_TARGET_CHARS = 1000;
 export const CHUNK_OVERLAP_CHARS = 200;
 // Protects the free embedding quota and database storage
 export const MAX_CHUNKS_PER_DOCUMENT = 600;
+
+// Search
+export const SEARCH_TOP_K = 6;
+export const MIN_SIMILARITY = 0.45; // a starting guess; tune it with real results
+export const MIN_QUERY_CHARS = 3;
+export const MAX_QUERY_CHARS = 300;
