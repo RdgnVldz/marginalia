@@ -39,6 +39,7 @@ export const sessions = pgTable(
 
 export const documentStatus = pgEnum("document_status", [
   "pending",
+  "queued",
   "processing",
   "ready",
   "failed",
