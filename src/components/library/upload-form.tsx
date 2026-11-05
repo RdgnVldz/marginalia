@@ -45,7 +45,7 @@ export function UploadForm() {
 
       const data = await response.json().catch(() => null);
       if (data?.status === "failed") {
-        setError(`Saved, but indexing failed: ${data.error ?? "try again from the list."}`);
+        setError(`Saved, but ${data.error ?? "indexing couldn't start."}`);
       }
 
       if (inputRef.current) inputRef.current.value = "";
@@ -72,7 +72,7 @@ export function UploadForm() {
           aria-describedby="file-hint"
         />
         <Button type="submit" disabled={uploading}>
-          {uploading ? "Uploading and indexing…" : "Upload"}
+          {uploading ? "Uploading…" : "Upload"}
         </Button>
       </div>
       <p id="file-hint" className="text-sm text-muted-foreground">

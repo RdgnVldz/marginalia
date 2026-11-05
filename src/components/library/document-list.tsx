@@ -16,6 +16,7 @@ function formatSize(bytes: number) {
 
 const statusLabel: Record<LibraryDocument["status"], string> = {
   pending: "Waiting to be indexed",
+  queued: "Queued for indexing…",
   processing: "Indexing…",
   ready: "Ready",
   failed: "Indexing failed",

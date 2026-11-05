@@ -4,6 +4,7 @@ import { DocumentList } from "@/src/components/library/document-list";
 import { UploadForm } from "@/src/components/library/upload-form";
 import { requireUser } from "@/src/lib/auth/current-user";
 import { listDocuments } from "@/src/lib/documents/queries";
+import { AutoRefresh } from "@/src/components/library/auto-refresh";
 
 export const metadata: Metadata = { title: "Library" };
 
@@ -40,5 +41,14 @@ export default function LibraryPage() {
 async function Documents() {
   const user = await requireUser();
   const documents = await listDocuments(user.id);
-  return <DocumentList documents={documents} />;
+  const active = documents.some(
+    (doc) => doc.status === "queued" || doc.status === "processing",
+  );
+
+  return (
+    <>
+      <AutoRefresh active={active} />
+      <DocumentList documents={documents} />
+    </>
+  );
 }
