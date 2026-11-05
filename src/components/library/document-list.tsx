@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { deleteDocument } from "@/src/lib/documents/actions";
+import { deleteDocument, indexDocumentAction } from "@/src/lib/documents/actions";
 import type { LibraryDocument } from "@/src/lib/documents/queries";
+import { IndexButton } from "./index-button";
 
 function kindLabel(mimeType: string) {
   if (mimeType === "application/pdf") return "PDF";
@@ -45,19 +46,33 @@ export function DocumentList({ documents }: { documents: LibraryDocument[] }) {
               {dateFormat.format(doc.createdAt)}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              {statusLabel[doc.status]}
+              {doc.status === "ready"
+                ? `Ready · ${doc.chunkCount} passages`
+                : statusLabel[doc.status]}
             </p>
+            {doc.status === "failed" && doc.errorMessage && (
+              <p className="mt-1 text-sm text-destructive">{doc.errorMessage}</p>
+            )}
           </div>
-          <form action={deleteDocument.bind(null, doc.id)}>
-            <Button
-              type="submit"
-              variant="ghost"
-              size="sm"
-              aria-label={`Delete ${doc.title}`}
-            >
-              Delete
-            </Button>
-          </form>
+          <div className="flex shrink-0 items-center gap-2">
+            {(doc.status === "pending" || doc.status === "failed") && (
+              <form action={indexDocumentAction.bind(null, doc.id)}>
+                <IndexButton
+                  label={doc.status === "failed" ? "Try again" : "Index now"}
+                />
+              </form>
+            )}
+            <form action={deleteDocument.bind(null, doc.id)}>
+              <Button
+                type="submit"
+                variant="ghost"
+                size="sm"
+                aria-label={`Delete ${doc.title}`}
+              >
+                Delete
+              </Button>
+            </form>
+          </div>
         </li>
       ))}
     </ul>

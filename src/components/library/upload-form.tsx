@@ -43,6 +43,14 @@ export function UploadForm() {
         return;
       }
 
+      const data = await response.json().catch(() => null);
+      if (data?.status === "failed") {
+        setError(`Saved, but indexing failed: ${data.error ?? "try again from the list."}`);
+      }
+
+      if (inputRef.current) inputRef.current.value = "";
+      router.refresh();
+
       if (inputRef.current) inputRef.current.value = "";
       router.refresh(); // re-run the server components so the list updates
     } catch {
@@ -64,12 +72,14 @@ export function UploadForm() {
           aria-describedby="file-hint"
         />
         <Button type="submit" disabled={uploading}>
-          {uploading ? "Uploading…" : "Upload"}
+          {uploading ? "Uploading and indexing…" : "Upload"}
         </Button>
       </div>
       <p id="file-hint" className="text-sm text-muted-foreground">
         PDF, TXT or Markdown, up to {MAX_MB} MB. The text is extracted and
-        stored; the original file isn't kept.
+        stored; the original file isn't kept. To make documents searchable,
+        their text is sent to Google's Gemini API, so don't upload anything
+        confidential.
       </p>
       {error && (
         <p role="alert" className="text-sm text-destructive">
