@@ -58,7 +58,13 @@ export async function searchPassages(
       })
       .from(chunks)
       .innerJoin(documents, eq(documents.id, chunks.documentId))
-      .where(and(eq(chunks.ownerId, ownerId), eq(documents.ownerId, ownerId)))
+      .where(
+        and(
+          eq(chunks.ownerId, ownerId),
+          eq(documents.ownerId, ownerId),
+          eq(documents.status, "ready"),
+      ),
+      )
       .orderBy(asc(distance)) // must be ORDER BY distance ASC for the index to apply
       .limit(SEARCH_TOP_K);
   });

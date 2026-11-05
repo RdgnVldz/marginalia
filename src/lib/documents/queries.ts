@@ -1,5 +1,5 @@
 import "server-only";
-import { count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "@/src/db";
 import { chunks, documents } from "@/src/db/schema";
 
@@ -30,6 +30,7 @@ export async function countSearchablePassages(ownerId: string) {
   const [{ total }] = await db
     .select({ total: count() })
     .from(chunks)
-    .where(eq(chunks.ownerId, ownerId));
+    .innerJoin(documents, eq(documents.id, chunks.documentId))
+    .where(and(eq(chunks.ownerId, ownerId), eq(documents.status, "ready")));
   return total;
 }

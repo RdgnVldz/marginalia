@@ -6,7 +6,7 @@ import { z } from "zod";
 import { db } from "@/src/db";
 import { documents } from "@/src/db/schema";
 import { requireUser } from "@/src/lib/auth/current-user";
-import { indexDocument } from "@/src/lib/documents/indexing";
+import { enqueueIndexing } from "@/src/lib/documents/enqueue";
 
 const idSchema = z.string().uuid();
 
@@ -34,6 +34,6 @@ export async function indexDocumentAction(documentId: string) {
   const parsedId = idSchema.safeParse(documentId);
   if (!parsedId.success) return;
 
-  await indexDocument(parsedId.data, user.id);
+  await enqueueIndexing(parsedId.data, user.id);
   revalidatePath("/library");
 }
