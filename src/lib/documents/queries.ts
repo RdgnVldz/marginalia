@@ -25,3 +25,11 @@ export async function listDocuments(ownerId: string) {
 }
 
 export type LibraryDocument = Awaited<ReturnType<typeof listDocuments>>[number];
+
+export async function countSearchablePassages(ownerId: string) {
+  const [{ total }] = await db
+    .select({ total: count() })
+    .from(chunks)
+    .where(eq(chunks.ownerId, ownerId));
+  return total;
+}
