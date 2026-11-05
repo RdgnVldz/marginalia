@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { AccountControls } from "@/src/app/account-controls";
 import { requireUser } from "@/src/lib/auth/current-user";
+import { AppNav } from "@/src/components/app/app-nav";
 
 export default function AppLayout({
   children,
@@ -40,11 +41,7 @@ async function AuthenticatedShell({
         <Link href="/library" className="font-serif text-xl font-medium">
           Marginalia
         </Link>
-        <nav className="mt-8 text-sm">
-          <Link href="/library" className="font-medium">
-            Library
-          </Link>
-        </nav>
+          <AppNav className="mt-8 flex flex-col gap-2 text-sm" />
         <div className="mt-auto space-y-3 text-sm">
           <p className="truncate text-muted-foreground" title={user.email}>
             {user.email}
@@ -54,11 +51,14 @@ async function AuthenticatedShell({
       </aside>
 
       <div className="flex-1">
-        <header className="flex items-center justify-between border-b border-border px-6 py-4 md:hidden">
-          <Link href="/library" className="font-serif text-lg font-medium">
-            Marginalia
-          </Link>
-          <AccountControls />
+          <header className="border-b border-border px-6 py-4 md:hidden">
+          <div className="flex items-center justify-between">
+            <Link href="/library" className="font-serif text-lg font-medium">
+              Marginalia
+            </Link>
+            <AccountControls />
+          </div>
+          <AppNav className="mt-3 flex gap-4 text-sm" />
         </header>
         {children}
       </div>
