@@ -86,6 +86,9 @@ export const chunks = pgTable(
     content: text("content").notNull(),
     // Hash of the content, used later to avoid embedding the same text twice
     contentHash: text("content_hash").notNull(),
+    // Which model produced this vector. Vectors from different models
+    // can't be compared, so we need to know what to re-embed after a switch.
+    embeddingModel: text("embedding_model").notNull(),
     embedding: vector("embedding", {
       dimensions: EMBEDDING_DIMENSIONS,
     }).notNull(),
@@ -93,13 +96,15 @@ export const chunks = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (table) => [
+  (table) => 
+    [
     unique("chunks_document_chunk_unique").on(table.documentId, table.chunkIndex),
     index("chunks_owner_id_idx").on(table.ownerId),
     index("chunks_embedding_idx").using(
       "hnsw",
       table.embedding.op("vector_cosine_ops"),
     ),
+    index("chunks_owner_hash_idx").on(table.ownerId, table.contentHash),
   ],
 );
 

@@ -1,0 +1,99 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "5e76cb74-29a1-4690-8170-e16e426080ff",
+  "prevIds": [
+    "565d08b2-6f4b-4f4a-bcb7-bde9700a6c23"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "chunks",
+        "embedding_model"
+      ],
+      "writes": [
+        "s|col|public.chunks.embedding_model",
+        "n|col|public.chunks.embedding_model",
+        "e|col|public.chunks.embedding_model"
+      ],
+      "reads": [
+        "n|tbl|public.chunks",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "chunks",
+        "chunks_owner_hash_idx"
+      ],
+      "writes": [
+        "s|idx|public.chunks_owner_hash_idx",
+        "n|idx|public.chunks_owner_hash_idx",
+        "e|idx|public.chunks_owner_hash_idx",
+        "n|rel|public.chunks_owner_hash_idx"
+      ],
+      "reads": [
+        "n|tbl|public.chunks",
+        "n|sch|public",
+        "n|col|public.chunks.owner_id",
+        "n|col|public.chunks.content_hash"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chunks",
+        "name": "embedding_model",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chunks",
+        "name": "chunks_owner_hash_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "owner_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "content_hash",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    }
+  ]
+}
