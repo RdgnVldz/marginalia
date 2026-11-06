@@ -13,6 +13,9 @@ import { buildSystemPrompt } from "@/src/lib/chat/prompt";
 import type { ChatMessage, ChatSource } from "@/src/lib/chat/types";
 import { searchPassages } from "@/src/lib/search/search";
 
+import { enforceLimits, tooManyRequests } from "@/src/lib/rate-limit/limit";
+import { CHAT_RULES } from "@/src/lib/rate-limit/rules";
+
 function fail(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
 }
@@ -41,6 +44,9 @@ export async function POST(request: Request) {
 
   const user = await getCurrentUser();
   if (!user) return fail("Sign in to ask questions.", 401);
+
+  const limited = await enforceLimits(user.id, CHAT_RULES);
+  if (!limited.allowed) return tooManyRequests(limited);
 
   // The browser sends the whole conversation, so treat it as untrusted input
   let messages: ChatMessage[];

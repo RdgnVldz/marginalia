@@ -8,6 +8,8 @@ import { requireUser } from "@/src/lib/auth/current-user";
 import { MAX_QUERY_CHARS, MIN_QUERY_CHARS } from "@/src/lib/constants";
 import { countSearchablePassages } from "@/src/lib/documents/queries";
 import { searchPassages } from "@/src/lib/search/search";
+import { enforceLimits } from "@/src/lib/rate-limit/limit";
+import { SEARCH_RULES } from "@/src/lib/rate-limit/rules";
 
 export const metadata: Metadata = { title: "Search" };
 
@@ -70,6 +72,18 @@ async function SearchContent({
         <SearchForm defaultValue={raw} />
         <p role="alert" className="mt-4 text-sm text-destructive">
           {parsed.error.issues[0]?.message}
+        </p>
+      </>
+    );
+  }
+
+  const limited = await enforceLimits(user.id, SEARCH_RULES);
+  if (!limited.allowed) {
+    return (
+      <>
+        <SearchForm defaultValue={parsed.data} />
+        <p role="alert" className="mt-4 text-sm text-destructive">
+          {limited.message}
         </p>
       </>
     );

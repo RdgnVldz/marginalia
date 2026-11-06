@@ -7,6 +7,9 @@ import { MAX_DOCUMENTS_PER_USER, MAX_FILE_BYTES } from "@/src/lib/constants";
 import { ParseError, parseDocument } from "@/src/lib/documents/parse";
 import { enqueueIndexing } from "@/src/lib/documents/enqueue";
 
+import { enforceLimits, tooManyRequests } from "@/src/lib/rate-limit/limit";
+import { UPLOAD_RULES } from "@/src/lib/rate-limit/rules";
+
 function fail(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
 }
@@ -21,6 +24,9 @@ export async function POST(request: Request) {
 
   const user = await getCurrentUser();
   if (!user) return fail("Sign in to upload documents.", 401);
+
+  const limited = await enforceLimits(user.id, UPLOAD_RULES);
+  if (!limited.allowed) return tooManyRequests(limited);
 
   let formData: FormData;
   try {

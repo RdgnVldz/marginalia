@@ -51,9 +51,10 @@ export function DocumentList({ documents }: { documents: LibraryDocument[] }) {
                 ? `Ready · ${doc.chunkCount} passages`
                 : statusLabel[doc.status]}
             </p>
-            {doc.status === "failed" && doc.errorMessage && (
-              <p className="mt-1 text-sm text-destructive">{doc.errorMessage}</p>
-            )}
+              {(doc.status === "failed" || doc.status === "pending") &&
+              doc.errorMessage && (
+                <p className="mt-1 text-sm text-destructive">{doc.errorMessage}</p>
+              )}
           </div>
           <div className="flex shrink-0 items-center gap-2">
             {(doc.status === "pending" || doc.status === "failed") && (
