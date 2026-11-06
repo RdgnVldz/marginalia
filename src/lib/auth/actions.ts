@@ -13,6 +13,13 @@ import {
   type FormState,
 } from "./validation";
 
+import { clientIp, enforceLimits, hashIdentifier } from "@/src/lib/rate-limit/limit";
+import {
+  LOGIN_EMAIL_RULES,
+  LOGIN_IP_RULES,
+  SIGNUP_IP_RULES,
+} from "@/src/lib/rate-limit/rules";
+
 const BCRYPT_ROUNDS = 12;
 
 // Used when the email doesn't exist, so a login attempt takes the same time
@@ -35,6 +42,9 @@ export async function signup(
   if (!parsed.success) {
     return { errors: collectErrors(parsed.error.issues), email };
   }
+
+  const ipCheck = await enforceLimits(await clientIp(), SIGNUP_IP_RULES);
+  if (!ipCheck.allowed) return { message: ipCheck.message, email };
 
   const [existing] = await db
     .select({ id: users.id })
@@ -70,6 +80,15 @@ export async function login(
   if (!parsed.success) {
     return { errors: collectErrors(parsed.error.issues), email };
   }
+
+  const ipCheck = await enforceLimits(await clientIp(), LOGIN_IP_RULES);
+  if (!ipCheck.allowed) return { message: ipCheck.message, email };
+
+  const emailCheck = await enforceLimits(
+    hashIdentifier(parsed.data.email),
+    LOGIN_EMAIL_RULES,
+  );
+  if (!emailCheck.allowed) return { message: emailCheck.message, email };
 
   const [user] = await db
     .select({ id: users.id, passwordHash: users.passwordHash })
