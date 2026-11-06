@@ -19,6 +19,8 @@
     "@ai-sdk/google": "^3.0.141",
     "@ai-sdk/react": "^3.0.326",
     "@base-ui/react": "^1.9.0",
+    "@upstash/ratelimit": "^2.2.0",
+    "@upstash/redis": "^1.41.0",
     "@vercel/functions": "^3.10.6",
     "ai": "^6.0.323",
     "bcryptjs": "^3.0.3",
